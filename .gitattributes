@@ -1,0 +1,7 @@
+*.tex text eol=lf
+*.bbl text eol=lf
+*.bib text eol=lf
+README.md text eol=lf
+.git* text eol=lf
+
+*.pdf binary
