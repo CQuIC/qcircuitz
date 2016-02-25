@@ -5,6 +5,9 @@
 \usepackage{listings}
 \renewcommand{\arraystretch}{1.5}
 
+% Dirac Kets % Temporary.
+\newcommand{\ket}[1]{\ensuremath{\left|#1\right\rangle}}
+
 \begin{document}
 \lstset{language=TeX}
 
@@ -120,6 +123,42 @@ We have chosen to use the \verb=ensuremath= command, meaning you do not need to 
 
 To begin, suppose the reader would like to typeset the following 
 simple circuit:
+\begin{tikzpicture}
+\matrix[row sep=0.4cm, column sep=0.8cm] (circuit) {
+    % First row.
+    \node (q1) {\ket{0}}; &[-0.5cm] 
+    \node[gatestyle] (H11) {H}; &
+    \node[crossstyle] (P12) {}; &
+    \node[crossx] (P13) {}; &
+    &[-0.3cm]
+    \coordinate (end1); \\
+    % Second row.
+    \node (q2) {\ket{0}}; &
+    \node[gatestyle] (H21) {H}; &
+    \node[circlewc] (P22) {}; &
+    &
+    \node[gatestyle] (H24) {H}; &
+    \coordinate (end2);\\
+    % Third row.
+    \node (q3) {\ket{0}}; &
+    \node[gatestyle] (H31) {H}; &
+    &
+    \node[crossx] (P33) {}; &
+    \node[gatestyle] (H34) {H}; &
+    \coordinate (end3); \\
+    };
+    % Draw bracket on right with resultant state.
+    \draw[decorate,decoration={brace},thick]
+        ($(circuit.north east)-(0cm,0.3cm)$)
+        to node[midway,right] (bracket) {$\displaystyle\ket{\Psi_{\rm out}}$}
+        ($(circuit.south east)+(0cm,0.3cm)$);
+    \begin{pgfonlayer}{background}
+        % Draw background box.
+        %\node[surround] (background) [fit = (q1) (H31) (bracket)] {};
+        % Draw lines.
+        \draw[thin] (q1) -- (end1)  (q2) -- (end2) (q3) -- (end3) (P12) -- (P22) (P13) -- (P33);
+    \end{pgfonlayer}
+\end{tikzpicture}
 %\[ \Qcircuit @C=1em @R=.7em {
 %      & \gate{X} & \qw
 %}\]

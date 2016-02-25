@@ -23,7 +23,7 @@
 
 \ProvidesPackage{qcircuit-tikz}[2016/02/24 The QCircuit-Tikz package version \qcircuittikzversion]
 \RequirePackage{tikz}
-\usetikzlibrary{calc}
+\usetikzlibrary{calc,backgrounds,fit,decorations.pathreplacing}
 \usepgflibrary{arrows}
 
 \DeclareOption{braket}{
@@ -37,14 +37,35 @@
     \newcommand{\expval}[1]{\ensuremath{\left\langle #1 \right\rangle}}
     \newcommand{\op}[2]{\ensuremath{\vert{#1}\rangle\langle{#2}\vert}}
     }
-
+    
 \ProcessOptions\relax
+
+% Style of common objects. Some are borrowed from http://tex.stackexchange.com/questions/199683/how-to-plot-quantum-logical-gates-with-tikz
+\tikzset{
+wirestyle/.style = {draw=black},
+gatestyle/.style = {rectangle,minimum size=1.5em,draw=black,
+	fill=white},
+crossstyle/.style = {draw,fill,shape=circle,minimum size=5pt,inner sep=0pt},
+cross/.style={path picture={ 
+\draw[thick,black](path picture bounding box.north) -- (path picture bounding box.south) (path picture bounding box.west) -- (path picture bounding box.east);
+}},
+crossx/.style={path picture={ 
+\draw[thick,black,inner sep=0pt]
+(path picture bounding box.south east) -- (path picture bounding box.north west) (path picture bounding box.south west) -- (path picture bounding box.north east);
+}},
+circlewc/.style={draw,circle,cross,minimum width=0.3 cm},
+}
+% Define three layers for the canvas.
+\pgfdeclarelayer{background}		% Wires
+\pgfdeclarelayer{foreground}		% Not currently used
+\pgfsetlayers{background,main,foreground}
 
 % The following defines the commands of QCircuit-TikZ, which should be as close as possible to the Qcircuit package.
 
 %\entrymodifiers={!C\entrybox}
 %
 %\newcommand{\qw}[1][-1]{\ar @{-} [0,#1]}
+\newcommand{\qw}[2]{\draw[wirestyle] (#1) -- (#2);} % The coordinate should be calculated automatically.
 %    % Defines a wire that connects horizontally.  By default it connects to the object on the left of the current object.
 %    % WARNING: Wire commands must appear after the gate in any given entry.
 %\newcommand{\qwx}[1][-1]{\ar @{-} [#1,0]}
@@ -66,6 +87,7 @@
 %    % Allows the insertion of text without a box and exands circuit around this text.
 %    % This is useful for such things as ... to indicate a generalized circuit.
 %\newcommand{\gate}[1]{*+<.6em>{#1} \POS ="i","i"+UR;"i"+UL **\dir{-};"i"+DL **\dir{-};"i"+DR **\dir{-};"i"+UR **\dir{-},"i" \qw}
+\newcommand{\gate}[2][] {\node (#1) [gatestyle] {\phantom{$#2$}} node [yshift=-5pt] {$#2$};}
 %    % Boxes the argument, making a gate.
 %\newcommand{\sgate}[2]{\gate{#1}  \qwx[#2]}
 %    % Creates a gate and a qwx wire going #2 spots below, for a gate split over
@@ -160,4 +182,12 @@
 %\newcommand{\pureghost}[1]{*+<1em,.9em>{\hphantom{#1}}}
 %    % Same as \ghost except it omits the wire leading to the left. 
 %
+%\endinput
+
+
+\newenvironment{qcircuitikz}{\begin{tikzpicture}}{\end{tikzpicture}}
+%override (unused) qcircuit-tikz environment for compability to externalization)
+\let\qcircuitikz\tikzpicture
+\let\endqcircuitikz\endtikzpicture
+
 %\endinput
