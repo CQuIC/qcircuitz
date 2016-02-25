@@ -28,6 +28,42 @@ the skill to render arbitrary QCDs in a matter of minutes. The source code for Q
 \section{Introduction}
 \setcounter{footnote}{1}
 Ever tried to use \LaTeX\ to typeset something like this?
+\[\begin{tikzpicture}
+\matrix[row sep=0.4cm, column sep=0.8cm] (circuit) {
+    % First row.
+    \node (q1) {\ket{0}}; &[-0.5cm] 
+    \node[gatestyle] (H11) {H}; &
+    \node[crossstyle] (P12) {}; &
+    \node[crossx] (P13) {}; &
+    &[-0.3cm]
+    \coordinate (end1); \\
+    % Second row.
+    \node (q2) {\ket{0}}; &
+    \node[gatestyle] (H21) {H}; &
+    \node[circlewc] (P22) {}; &
+    &
+    \node[gatestyle] (H24) {H}; &
+    \coordinate (end2);\\
+    % Third row.
+    \node (q3) {\ket{0}}; &
+    \node[gatestyle] (H31) {H}; &
+    &
+    \node[crossx] (P33) {}; &
+    \node[gatestyle] (H34) {H}; &
+    \coordinate (end3); \\
+    };
+    % Draw bracket on right with resultant state.
+    \draw[decorate,decoration={brace},thick]
+        ($(circuit.north east)-(0cm,0.3cm)$)
+        to node[midway,right] (bracket) {$\,\,\displaystyle\ket{\Psi_{\rm out}}$}
+        ($(circuit.south east)+(0cm,0.3cm)$);
+    \begin{pgfonlayer}{background}
+        % Draw background box.
+        %\node[surround] (background) [fit = (q1) (H31) (bracket)] {};
+        % Draw lines.
+        \draw[thin] (q1) -- (end1)  (q2) -- (end2) (q3) -- (end3) (P12) -- (P22) (P13) -- (P33);
+    \end{pgfonlayer}
+\end{tikzpicture}\]
 %\[
 %\Qcircuit @C=.5em @R=0em @!R {
 %& \ctrl{1} & \qw & & & \qw & \ctrl{1} & \qw & \ctrl{1} & \ctrl{2} & \qw\\
@@ -123,50 +159,24 @@ We have chosen to use the \verb=ensuremath= command, meaning you do not need to 
 
 To begin, suppose the reader would like to typeset the following 
 simple circuit:
-\begin{tikzpicture}
-\matrix[row sep=0.4cm, column sep=0.8cm] (circuit) {
-    % First row.
-    \node (q1) {\ket{0}}; &[-0.5cm] 
-    \node[gatestyle] (H11) {H}; &
-    \node[crossstyle] (P12) {}; &
-    \node[crossx] (P13) {}; &
-    &[-0.3cm]
-    \coordinate (end1); \\
-    % Second row.
-    \node (q2) {\ket{0}}; &
-    \node[gatestyle] (H21) {H}; &
-    \node[circlewc] (P22) {}; &
-    &
-    \node[gatestyle] (H24) {H}; &
-    \coordinate (end2);\\
-    % Third row.
-    \node (q3) {\ket{0}}; &
-    \node[gatestyle] (H31) {H}; &
-    &
-    \node[crossx] (P33) {}; &
-    \node[gatestyle] (H34) {H}; &
-    \coordinate (end3); \\
-    };
-    % Draw bracket on right with resultant state.
-    \draw[decorate,decoration={brace},thick]
-        ($(circuit.north east)-(0cm,0.3cm)$)
-        to node[midway,right] (bracket) {$\displaystyle\ket{\Psi_{\rm out}}$}
-        ($(circuit.south east)+(0cm,0.3cm)$);
+\[\begin{qcircuit}
+\node[gatestyle] (A) at (0,0) {X};
     \begin{pgfonlayer}{background}
-        % Draw background box.
-        %\node[surround] (background) [fit = (q1) (H31) (bracket)] {};
-        % Draw lines.
-        \draw[thin] (q1) -- (end1)  (q2) -- (end2) (q3) -- (end3) (P12) -- (P22) (P13) -- (P33);
+        \draw ($(A.west)-(0.5em,0)$)--($(A.east)+(0.5em,0)$);
     \end{pgfonlayer}
-\end{tikzpicture}
+\end{qcircuit}\]
 %\[ \Qcircuit @C=1em @R=.7em {
 %      & \gate{X} & \qw
 %}\]
-%
-%This was typeset using
-%{\small \begin{verbatim}\Qcircuit @C=1em @R=.7em {
-%      & \gate{X} & \qw
-%}\end{verbatim}}
+
+This was typeset using
+{\small \begin{verbatim}\begin{qcircuit}
+\node[gatestyle] (A) at (0,0) {X};
+ \begin{pgfonlayer}{background}
+   \draw ($(A.west)-(0.5em,0)$)--($(A.east)+(0.5em,0)$);
+ \end{pgfonlayer}
+\end{qcircuit}
+\end{verbatim}}
 %
 %The command \verb=\Qcircuit= is simply a disguised \verb=\xymatrix= command 
 %with a default parameter set.  For readers unfamiliar with the \verb=xymatrix= environment, it suffices 
